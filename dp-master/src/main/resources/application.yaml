@@ -1,0 +1,53 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: hmdp
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.76.129:3306/hmdp?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: admin
+    password: 123
+  redis:
+    host: 192.168.76.129
+    port: 6379
+    password: 123321
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+  jackson:
+    default-property-inclusion: non_null # JSON处理时忽略非空字段
+  kafka:
+      bootstrap-servers: 192.168.76.129:9092
+      producer:
+        retries: 10
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      consumer:
+        group-id: ${spring.application.name}-test
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      listener:
+        ack-mode: manual
+
+mybatis-plus:
+  type-aliases-package: com.hmdp.entity,com.like.entity # 别名扫描包
+logging:
+  level:
+    com.hmdp: debug
+  pattern:
+    dateformat: mm:ss.SSS
+kafka:
+  hosts: 192.168.76.129:9092
+  group: ${spring.application.name}
+
+# 智能导购（OpenAI 兼容 Chat Completions + tools）
+llm:
+  openai:
+    base-url: https://api.openai.com/v1
+    api-key: ${LLM_OPENAI_API_KEY:}
+    model: gpt-4o-mini
+    max-tool-rounds: 5
